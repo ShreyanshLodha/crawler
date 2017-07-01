@@ -1,4 +1,5 @@
 import os
+from urllib import parse
 from urllib import robotparser
 import spider
 
@@ -16,8 +17,7 @@ def create_data_files(project_name, base_url):
     crawled = os.path.join(project_name,"crawled.txt")
 
     # Set link for robotparser
-    rp.set_url(base_url.__add__("/robots.txt"))
-
+    rp.set_url(parse.urljoin(base_url,"robots.txt"))
     if not os.path.isfile(queue):
         write_file(queue, base_url)
     if not os.path.isfile(crawled):
