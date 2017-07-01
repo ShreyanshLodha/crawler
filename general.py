@@ -1,6 +1,8 @@
 import os
+from urllib import robotparser
+import spider
 
-
+rp = robotparser.RobotFileParser()
 # Each website is a separate project (folder)
 def create_project_dir(directory):
     if not os.path.exists(directory):
@@ -12,6 +14,10 @@ def create_project_dir(directory):
 def create_data_files(project_name, base_url):
     queue = os.path.join(project_name , 'queue.txt')
     crawled = os.path.join(project_name,"crawled.txt")
+
+    # Set link for robotparser
+    rp.set_url(base_url.__add__("/robots.txt"))
+
     if not os.path.isfile(queue):
         write_file(queue, base_url)
     if not os.path.isfile(crawled):
@@ -21,13 +27,15 @@ def create_data_files(project_name, base_url):
 # Create a new file
 def write_file(path, data):
     with open(path, 'w') as f:
-        f.write(data)
+        if rp.can_fetch("*",data):
+            f.write(data)
 
 
 # Add data onto an existing file
 def append_to_file(path, data):
     with open(path, 'a') as file:
-        file.write(data + '\n')
+        if rp.can_fetch("*",data):
+            file.write(data + '\n')
 
 
 # Delete the contents of a file
